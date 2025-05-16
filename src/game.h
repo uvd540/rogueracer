@@ -6,21 +6,31 @@
 #include "car.h"
 #include "history_node.h"
 
-// TODO: move move_progress from car.c to game.c
+typedef struct {
+  bool move;
+  bool debug;
+} GameInputs;
+
 typedef struct {
   bool        debug_mode;
-  Texture2D   car_texture;
+  // game entities
   Car         car_current;
   Car         car_destination;
   bool        destination_valid;
-  Camera2D    camera;
   HistoryNode history_nodes[MAX_MOVES];
+  // rendering
+  Camera2D    camera;
+  Texture2D   car_texture;
+  // move animation
   bool        is_moving;
   Timer       move_timer;
   float       move_progress; // a float of range [0, 1] that indicates the progress of the current move animation
+  // inputs
+  GameInputs  inputs;
 } Game;
 
 void game_init(Game *game);
+void game_handle_inputs(Game *game);
 void game_update(Game *game, float dt, double current_time);
 void game_draw(Game *game);
 void game_shutdown(Game *game);

@@ -1,4 +1,5 @@
 #include "game.h"
+#include "raylib.h"
 #include "utils.h"
 #include "raymath.h"
 #include <math.h>
@@ -12,17 +13,19 @@ void game_init(Game *game) {
   game->camera.zoom = 1.0f;
 }
 
-void game_update(Game *game, float dt, double current_time) {
+void game_handle_inputs(Game *game) {
+  game->inputs = (GameInputs){0};
   if (IsKeyDown(KEY_GRAVE)) {
-    game->debug_mode = !game->debug_mode;
+    game->inputs.debug = true;
   }
-  if (game->debug_mode) {
-    if (IsKeyDown(KEY_LEFT)) {
-      game->car_current.heading -= 0.01f;
-    }
-    if (IsKeyDown(KEY_RIGHT)) {
-      game->car_current.heading += 0.01f;
-    }
+  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    game->inputs.move = true;
+  }
+}
+
+void game_update(Game *game, float dt, double current_time) {
+  if (game->inputs.debug) {
+    game->debug_mode = !game->debug_mode;
   }
   game->destination_valid = false;
   Vector2 desired_position = GetScreenToWorld2D(GetMousePosition(), game->camera);
@@ -38,7 +41,7 @@ void game_update(Game *game, float dt, double current_time) {
   if (game->destination_valid) {
     game->car_destination.render_position = desired_position;
     game->car_destination.heading = desired_heading;
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (game->inputs.move) {
       game->is_moving = true;
       game->move_progress = 0.0f;
       timer_init(&game->move_timer, false, 0.5f, current_time);

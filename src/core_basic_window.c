@@ -13,6 +13,7 @@ int main(void)
     SetTargetFPS(60);
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
+        game_handle_inputs(&game);
         game_update(&game, GetFrameTime(), GetTime());
         BeginDrawing();
             ClearBackground(BROWN);
