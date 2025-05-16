@@ -1,0 +1,4 @@
+build-windows.bat
+.clangd
+builds-debug/
+temp/
