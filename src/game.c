@@ -32,22 +32,29 @@ void game_update(Game *game, float dt, double current_time) {
                                         game->car_current.heading + game->car_current.steering);
   game->destination_valid = valid_speed && valid_heading;
   if (game->destination_valid) {
-    game->car_destination.position = desired_position;
+    game->car_destination.render_position = desired_position;
     game->car_destination.heading = desired_heading;
-    if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       for (int i = 0; i < MAX_MOVES; i++) {
         if (!game->history_nodes[i].active) {
           history_node_init(&game->history_nodes[i], game->car_current.position, 0, current_time);
           break;
         }
       }
-      game->car_current.position = game->car_destination.position;
-      game->car_current.heading = game->car_destination.heading;
+      // snap the car to the last position in case
+      // the user makes quick moves in succession
+      game->car_current.render_position = game->car_current.position;
+      timer_init(&game->car_current.move_timer, false, 1.0f, current_time);
+      game->car_current.position = desired_position;
+      game->car_current.heading = desired_heading;
       game->car_current.speed = desired_speed;
     }
   }
+  game->camera.target = game->car_current.render_position;
+  car_update(&game->car_current, dt, current_time);
   history_nodes_update(game->history_nodes, dt, current_time);
 }
+
 void game_draw(Game *game) {
   BeginMode2D(game->camera);
     DrawRing(

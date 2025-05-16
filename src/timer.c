@@ -18,3 +18,7 @@ bool timer_is_finished(Timer *timer, double current_time) {
   }
   return false;
 }
+
+float timer_progress_f(Timer* timer, double current_time) {
+  return (float) (current_time - timer->start_time) / (timer->start_time + timer->duration);
+}
