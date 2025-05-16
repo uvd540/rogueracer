@@ -5,13 +5,11 @@ int main(void)
 {
     int screenWidth = 800;
     int screenHeight = 600;
-
     InitWindow(screenWidth, screenHeight, "rogueracer");
     Game game = {0};
     game_init(&game);
-
     SetTargetFPS(60);
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose())
     {
         game_handle_inputs(&game);
         game_update(&game, GetFrameTime(), GetTime());
@@ -21,9 +19,7 @@ int main(void)
             game_draw(&game);
         EndDrawing();
     }
-
     game_shutdown(&game);
-    CloseWindow();        // Close window and OpenGL context
-
+    CloseWindow();
     return 0;
 }

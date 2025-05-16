@@ -18,6 +18,8 @@ typedef struct {
   Car         car_destination;
   bool        destination_valid;
   HistoryNode history_nodes[MAX_MOVES];
+  // Vector2     track_outer[MAX_TRACK_POINTS];
+  // Vector2     track_inner[MAX_TRACK_POINTS];
   // rendering
   Camera2D    camera;
   Texture2D   car_texture;

@@ -5,7 +5,7 @@
 #include <math.h>
 
 void game_init(Game *game) {
-  game->car_texture = LoadTexture("../../assets/car_red_small_5.png");
+  game->car_texture = LoadTexture(ASSETS_PATH "car_red_small_5.png");
   car_init(&game->car_current);
   car_init(&game->car_destination);
   game->camera.offset = (Vector2){400.0f, 300.0f};
