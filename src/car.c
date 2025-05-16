@@ -2,7 +2,6 @@
 #include "globals.h"
 
 void car_init(Car *car) {
-  car->position = (Vector2){100.0f, 100.0f};
   car->heading = PI / 4.0f;
   car->speed = 100.0f;
   car->acceleration = 50.0f;
