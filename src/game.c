@@ -11,8 +11,12 @@ void game_init(Game *game) {
   game->camera.target = game->car_current.position;
   game->camera.zoom = 1.0f;
 }
+
 void game_update(Game *game, float dt, double current_time) {
-  if (DEBUG_MODE) {
+  if (IsKeyDown(KEY_GRAVE)) {
+    game->debug_mode = !game->debug_mode;
+  }
+  if (game->debug_mode) {
     if (IsKeyDown(KEY_LEFT)) {
       game->car_current.heading -= 0.01f;
     }
@@ -35,24 +39,35 @@ void game_update(Game *game, float dt, double current_time) {
     game->car_destination.render_position = desired_position;
     game->car_destination.heading = desired_heading;
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+      game->is_moving = true;
+      game->move_progress = 0.0f;
+      timer_init(&game->move_timer, false, 0.5f, current_time);
       for (int i = 0; i < MAX_MOVES; i++) {
         if (!game->history_nodes[i].active) {
           history_node_init(&game->history_nodes[i], game->car_current.position, 0, current_time);
           break;
         }
       }
+      timer_init(&game->car_current.move_timer, false, 1.0f, current_time);
       // snap the car to the last position in case
       // the user makes quick moves in succession
       game->car_current.render_position = game->car_current.position;
-      timer_init(&game->car_current.move_timer, false, 1.0f, current_time);
-      game->car_current.position = desired_position;
-      game->car_current.heading = desired_heading;
-      game->car_current.speed = desired_speed;
+      game->car_current.position        = desired_position;
+      game->car_current.heading         = desired_heading;
+      game->car_current.speed           = desired_speed;
+    }
+  }
+  if (game->is_moving) {
+    game->move_progress = timer_progress_f(&game->move_timer, current_time);
+    game->car_current.render_position = Vector2Lerp(game->car_current.render_position, game->car_current.position, game->move_progress);
+    for (int i = 0; i < MAX_MOVES; i++) {
+      game->history_nodes[i].inner_radius = Lerp(game->history_nodes[i].inner_radius, 0.6f * game->history_nodes[i].outer_radius, game->move_progress);
+    }
+    if (game->move_progress >= 1.0f) {
+      game->is_moving = false;
     }
   }
   game->camera.target = game->car_current.render_position;
-  car_update(&game->car_current, dt, current_time);
-  history_nodes_update(game->history_nodes, dt, current_time);
 }
 
 void game_draw(Game *game) {
@@ -80,8 +95,12 @@ void game_draw(Game *game) {
       car_draw(&game->car_destination, game->car_texture, 0.5f);
     }
   history_nodes_draw(game->history_nodes);
+  if (game->debug_mode) {
+    DrawCircleV(game->car_current.render_position, 4, RED);
+  }
   EndMode2D();
 }
+
 void game_shutdown(Game *game) {
   UnloadTexture(game->car_texture);
 }
