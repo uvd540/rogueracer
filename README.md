@@ -8,7 +8,7 @@ The easiest way to build is to use the included cmake configuration file.
 ```
   git clone https://github.com/uvd540/rogueracer.git
   cd rogueracer
-  cmake -B . -S build
+  cmake -S . -B build
   cmake --build build
   .\build\Debug\rogueracer.exe
 ```
