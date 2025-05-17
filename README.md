@@ -3,7 +3,7 @@ A turn based racing roguelike based on the classic pen and paper game [racetrack
 
 Made using [raylib](http://raylib.com)
 
-# Build instructions
+## Build instructions
 The easiest way to build is to use the included cmake configuration file.
 ```
   git clone https://github.com/uvd540/rogueracer.git
