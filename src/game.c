@@ -1,4 +1,5 @@
 #include "game.h"
+#include "history_node.h"
 #include "raylib.h"
 #include "utils.h"
 #include "raymath.h"
@@ -47,7 +48,17 @@ void game_update(Game *game, float dt, double current_time) {
       timer_init(&game->move_timer, false, 0.5f, current_time);
       for (int i = 0; i < MAX_MOVES; i++) {
         if (!game->history_nodes[i].active) {
-          history_node_init(&game->history_nodes[i], game->car_current.position, 0, current_time);
+          HistoryNodeType type = HISTORY_NODE_START;
+          if (i == 0) {
+            history_node_init(&game->history_nodes[i], game->car_current.position, type, current_time);
+          } else {
+            if (desired_speed >= game->car_current.speed) {
+              type = HISTORY_NODE_ACCLERATION;
+            } else {
+              type = HISTORY_NODE_DECELERATION;
+            }
+          }
+          history_node_init(&game->history_nodes[i], game->car_current.position, type, current_time);
           break;
         }
       }

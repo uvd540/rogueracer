@@ -18,8 +18,23 @@ void history_node_init(HistoryNode *history_node, Vector2 position, HistoryNodeT
 void history_nodes_draw(HistoryNode *history_nodes) {
   for (int i = 0; i < MAX_MOVES; i++) {
     if (history_nodes[i].active) {
+      Color color = {0};
+      switch (history_nodes[i].type) {
+        case HISTORY_NODE_START: {
+            color = PURPLE;
+            break;
+        }
+        case HISTORY_NODE_ACCLERATION: {
+          color = GREEN;
+          break;
+        }
+        case HISTORY_NODE_DECELERATION: {
+          color = ORANGE;
+          break;
+        }
+      }
       DrawCircleV(history_nodes[i].position, history_nodes[i].outer_radius, BLACK);
-      DrawCircleV(history_nodes[i].position, history_nodes[i].inner_radius, GREEN);
+      DrawCircleV(history_nodes[i].position, history_nodes[i].inner_radius, color);
     }
   }
 }
